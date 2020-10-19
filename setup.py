@@ -10,4 +10,4 @@ setup(name='tbevents',
       packages=find_packages(),
       long_description=open('README.md').read(),
       zip_safe=False,
-      install_requires=['kombu','azure-servicebus','python-dateutil'])
+      install_requires=['kombu','python-dateutil'])

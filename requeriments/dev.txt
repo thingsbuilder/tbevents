@@ -1,0 +1,4 @@
+pytest
+kombu
+python-dateutil
+coverage
