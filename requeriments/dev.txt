@@ -2,3 +2,4 @@ pytest
 kombu
 python-dateutil
 coverage
+pytest-cov

@@ -1,6 +1,8 @@
 import datetime
 from dateutil import parser
 
+from tbevents.event_bus.utils.logger import logger
+
 
 class Event:
 

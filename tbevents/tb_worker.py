@@ -9,9 +9,9 @@ from tbevents.singleton import Singleton
 
 
 class TbWorker(metaclass=Singleton):
-    EVENT_STORE_NAME = "EVENT_STORE"
-    NEW_EVENT_TOPIC = "NEW_EVENT_TOPIC_CREATED"
-    EVENT_STREAM_NAME = "EVENT_STREAM"
+    EVENT_STORE_NAME = "event_store"
+    NEW_EVENT_TOPIC = "new_event_topic_created"
+    EVENT_STREAM_NAME = "event_stream"
 
     def __init__(self, worker_name: str, broker_provider=None, health_check_period=30000, health_check_period_on_critical_error=30000):
         if len(worker_name) > 50:
@@ -29,7 +29,7 @@ class TbWorker(metaclass=Singleton):
         self.last_health_check = datetime.now() - timedelta(
             milliseconds=self.health_check_period + 1)  # force first health check
 
-        #self.create_new_event_topic()
+        self.create_new_event_topic()
 
     def append_health_check_function(self, func_name, retry_period=5000):
         from inspect import signature
@@ -55,7 +55,7 @@ class TbWorker(metaclass=Singleton):
             raise TypeError(f"{func_name} must return a boolean")
         if validation_model is not None and len(signature(func_name).parameters) < 2:
             raise TypeError("If you expect validate a message you must accept the validate object in callback function")
-        queue_name = f"{event_name.lower()}/{self.worker_name.upper()}"
+        queue_name = f"{event_name.lower()}/{self.worker_name}"
         self._listening_events[queue_name] = func_name
         self._validators[queue_name] = validation_model
         if event_name.lower() is not self.NEW_EVENT_TOPIC and self.worker_name == "event_store":
@@ -78,10 +78,10 @@ class TbWorker(metaclass=Singleton):
                                                           aggregate_type="event_store",
                                                           payload={"queue_name": queue_name}, )
 
-            self.broker.send_message(message=enveloped_message, topic=self.NEW_EVENT_TOPIC)  # TODO
+            self.broker.send_message(message=enveloped_message, topic=self.NEW_EVENT_TOPIC)
 
     def append_publish_event(self, event_name):
-        if event_name.lower() == "EVENT_STREAM":
+        if event_name.lower() == self.EVENT_STREAM_NAME:
             raise ValueError("Publish on Event Stream is a internal function")
         try:
             self._publish_events.append(event_name)
@@ -96,7 +96,7 @@ class TbWorker(metaclass=Singleton):
             "event_name": event_name,
             "aggregate_id": aggregate_id,
             "aggregate_type": aggregate_type,
-            "from": self.worker_name,
+            "sender": self.worker_name,
             "date_time": datetime.utcnow(),
             "payload": payload,
             "version": "1.0.0.0"
