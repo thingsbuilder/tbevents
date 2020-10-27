@@ -24,11 +24,12 @@ stopc:
 runc:
 	docker run --name ${CONTAINER} $(IMAGE_NAME):${VERSION}
 
-create-dist:
-	# sample make create-dist LIBVERSION=2.0
-	tar -czvf tbevents-$(LIBVERSION).tar.gz * && mkdir -p dist/tbevents && mv tbevents-$(LIBVERSION).tar.gz ./dist/tbevents && cp ./dist/tbevents/tbevents-$(LIBVERSION).tar.gz ./dist/tbevents/tbevents-latest.tar.gz
+upload-pip:
+	# https://dzone.com/articles/executable-package-pip-install
+	python setup.py bdist_wheel
+	python -m twine upload dist/*
 
-pip-server:
+pip-upload:
 	cd dist && twistd -n web  --path .
 
 install-local:
