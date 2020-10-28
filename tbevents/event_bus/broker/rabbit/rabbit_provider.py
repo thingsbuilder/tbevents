@@ -42,7 +42,7 @@ class RabbitMQProvider(BrokerProvider):
             queue_name].consumer.connection.connected
 
     def get_simple_queue(self, queue_name):
-        if not queue_name in self.queues or self.rabbit_desconnected(queue_name):
+        if not queue_name in self.queues or self.rabbit_disconnected(queue_name):
             conn = self.establish_connection()
             self.queues[queue_name] = conn.SimpleQueue(
                 name=Queue(name=queue_name, channel=conn))
