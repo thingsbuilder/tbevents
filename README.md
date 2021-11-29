@@ -8,7 +8,7 @@ A [series of articles on Medium](https://medium.com/@eskelsen/uma-arquitectura-s
 
 #### Changelog:
 
-#####28/11/2021
+##### 28/11/2021
 - Now, by default, new topic aren't announced in new_event_topic_created/event_store.
 To announce, you must specify announce_new_topic=True on TbWorker declaration, like that: `w = TbWorker("example_worker_1", announce_new_topic=True)`
 - Now you can declare a prefix to Rabbit Exchange names creating an environment variable: `export RBMQ_PREFIX="my_prefix/"`  
