@@ -4,11 +4,13 @@ from tbevents.event_bus.broker.broker_settings import BrokerSettings
 
 
 class RabbitSettings(BrokerSettings):
-    def __init__(self, host=None, user=None, password=None, port=None, virtual_host="/"):
+
+    def __init__(self, host=None, user=None, password=None, port=None, virtual_host="/", prefix=""):
         self.host = os.environ.get("RBMQ_HOST") if host is None else host
         self.user = os.environ.get("RBMQ_USER") if user is None else user
         self.password = os.environ.get("RBMQ_PASS") if password is None else password
         self.port = os.environ.get("RBMQ_PORT") if port is None else port
+        self.prefix = prefix if os.environ.get("RBMQ_PREFIX") is None else os.environ.get("RBMQ_PREFIX")
         self.virtual_host = virtual_host
         self._validate_host()
         self._validate_user()
@@ -17,6 +19,9 @@ class RabbitSettings(BrokerSettings):
 
     def get_host(self):
         return self.host
+
+    def get_event_name_prefix(self):
+        return self.prefix
 
     def get_user(self):
         return self.user

@@ -5,7 +5,7 @@ import os
 
 class BrokerSettings(ABC):
     @abstractmethod
-    def __init__(self, host=None, user=None, password=None, port=None):
+    def __init__(self, host=None, user=None, password=None, port=None, event_name_prefix=""):
         pass
 
     @abstractmethod
@@ -26,5 +26,9 @@ class BrokerSettings(ABC):
 
     @abstractmethod
     def get_virtual_host(self):
+        pass
+
+    @abstractmethod
+    def get_event_name_prefix(self):
         pass
 

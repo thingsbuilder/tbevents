@@ -26,7 +26,8 @@ class RabbitMQProvider(BrokerProvider):
                                           port=self.config.get_port(),
                                           userid=self.config.get_user(),
                                           password=self.config.get_password(),
-                                          virtual_host=self.config.get_virtual_host(), connect_timeout=30, heartbeat=0)
+                                          virtual_host=self.config.get_virtual_host(),
+                                          connect_timeout=30, heartbeat=0)
         self.queues = {}
 
     def establish_connection(self):
@@ -97,7 +98,7 @@ class RabbitMQProvider(BrokerProvider):
             _conn.connect()
             channel = _conn.channel()
             topic = Exchange(
-                name=f"TOPIC/{topic_name}", type="topic", channel=channel
+                name=f"{self.config.get_event_name_prefix()}{topic_name}", type="topic", channel=channel
             )
             topic.declare()
 
@@ -106,8 +107,8 @@ class RabbitMQProvider(BrokerProvider):
             _conn.connect()
             channel = _conn.channel()
 
-            if not topic_name.startswith("TOPIC/"):
-                topic_name = f"TOPIC/{topic_name}"
+            if not topic_name.startswith(self.config.get_event_name_prefix()):
+                topic_name = f"{self.config.get_event_name_prefix()}{topic_name}"
 
             topic = Exchange(
                 name=f"{topic_name}", type="topic", channel=channel
@@ -129,8 +130,8 @@ class RabbitMQProvider(BrokerProvider):
 
             logger.debug(f"Insert data on TOPIC: {topic}")
 
-            if not topic.startswith("TOPIC/"):
-                topic = f"TOPIC/{topic}"
+            if not topic.startswith(self.config.get_event_name_prefix()):
+                topic = f"{self.config.get_event_name_prefix()}{topic}"
 
             producer.publish(body=message, exchange=topic, routing_key=None)
 

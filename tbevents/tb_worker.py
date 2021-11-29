@@ -13,7 +13,8 @@ class TbWorker(metaclass=Singleton):
     NEW_EVENT_TOPIC = "new_event_topic_created"
     EVENT_STREAM_NAME = "event_stream"
 
-    def __init__(self, worker_name: str, broker_provider=None, health_check_period=30000, health_check_period_on_critical_error=30000):
+    def __init__(self, worker_name: str, broker_provider=None, health_check_period=30000,
+                 health_check_period_on_critical_error=30000, announce_new_topic=False):
         if len(worker_name) > 50:
             raise ValueError('Max worker name length: 50')
         self.worker_name = worker_name
@@ -26,6 +27,7 @@ class TbWorker(metaclass=Singleton):
         self._health_check_functions = []
         self._validators = {}
         self.can_execute = 0
+        self.announce_new_topic = announce_new_topic
         self.last_health_check = datetime.now() - timedelta(
             milliseconds=self.health_check_period + 1)  # force first health check
 
@@ -86,7 +88,8 @@ class TbWorker(metaclass=Singleton):
         try:
             self._publish_events.append(event_name)
             self.broker.declare_topic(event_name.lower())
-            self._register_event_store(event_name)
+            if self.announce_new_topic:
+                self._register_event_store(event_name)
         except Exception as e:
             logger.error(str(e))
             raise e

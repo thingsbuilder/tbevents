@@ -1,6 +1,6 @@
 #!make
-include env.dev
-export $(shell sed 's/=.*//' env.dev)
+#include env.dev
+#export $(shell sed 's/=.*//' env.dev)
 export WORKER_NAME=worker
 export PYTHON=/usr/bin/python3
 export IMAGE_NAME=rabbit-server-custom
