@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 class BrokerProvider(ABC):
 
     @abstractmethod
-    def append_to_topic(self, topic_name, queue_name,routing_key=None):
+    def append_to_topic(self, topic_name, queue_name, routing_key=None):
         pass
 
     @abstractmethod

@@ -129,3 +129,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 /examples/rabbit/data/
+
+### macOS ###
+# General
+.DS_Store
+.AppleDouble
+.LSOverride

@@ -8,8 +8,13 @@ def callback_function(e: Event) -> bool:
     return True
 
 
-w = TbWorker("example_worker_2")
+def sub():
+    w = TbWorker("example_worker_2")
 
-w.append_listening_event("my_fancy_event", callback_function)
+    w.append_listening_event("my_fancy_event", callback_function)
 
-w.start_listening()
+    w.start_listening()
+
+
+if __name__ == "__main__":
+    sub()

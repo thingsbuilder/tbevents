@@ -3,3 +3,6 @@ kombu
 python-dateutil
 coverage
 pytest-cov
+bson
+azure-servicebus
+pytest_rabbitmq
