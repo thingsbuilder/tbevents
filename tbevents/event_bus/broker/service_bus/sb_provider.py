@@ -5,7 +5,7 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.servicebus import (
     ServiceBusClient,
     ServiceBusReceiver,
-    ServiceBusReceivedMessage,
+    ServiceBusReceivedMessage, TransportType,
 )
 from azure.servicebus import ServiceBusMessage
 from azure.servicebus.management import ServiceBusAdministrationClient
@@ -24,7 +24,7 @@ class SBProvider(BrokerProvider):
     def __init__(self, broker_configuration: BrokerSettings):
         self.config = broker_configuration
         self.connection = ServiceBusClient.from_connection_string(
-            self.config.get_host(), retry_total=10, retry_backoff_factor=1, retry_backoff_max=30
+            self.config.get_host(),  transport_type=TransportType.AmqpOverWebsocket, retry_total=10, retry_backoff_factor=1, retry_backoff_max=30
         )
         self.senders = {}
 
