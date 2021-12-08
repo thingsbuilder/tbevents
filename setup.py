@@ -11,7 +11,8 @@ setup(name='tbevents',
       author='Cassio R Eskelsen',
       author_email='eskelsen@gmail.com',
       description='This library provides functionality for an event-driven architecture using brokers like RabbitMQ '
+                  'or Service Bus'
                   'as Event Bus',
       packages=find_packages(),
       long_description=open('README.md').read(),
-      install_requires=['kombu', 'python-dateutil'])
+      install_requires=['kombu', 'python-dateutil', 'azure-servicebus'])
