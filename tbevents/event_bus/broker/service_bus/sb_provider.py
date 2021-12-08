@@ -1,17 +1,15 @@
-import datetime
 import hashlib
 import json
-import uuid
-from typing import Callable
 
+from azure.core.exceptions import ResourceNotFoundError
 from azure.servicebus import (
     ServiceBusClient,
     ServiceBusReceiver,
-    ServiceBusReceivedMessage,
+    ServiceBusReceivedMessage, TransportType,
 )
-from azure.core.exceptions import ResourceNotFoundError
 from azure.servicebus import ServiceBusMessage
 from azure.servicebus.management import ServiceBusAdministrationClient
+
 from tbevents.event_bus.broker.broker_provider import BrokerProvider
 from tbevents.event_bus.broker.broker_settings import BrokerSettings
 from tbevents.event_bus.models.event import Event
@@ -26,15 +24,12 @@ class SBProvider(BrokerProvider):
     def __init__(self, broker_configuration: BrokerSettings):
         self.config = broker_configuration
         self.connection = ServiceBusClient.from_connection_string(
-            self.config.get_host()
+            self.config.get_host(),  transport_type=TransportType.AmqpOverWebsocket, retry_total=10, retry_backoff_factor=1, retry_backoff_max=30
         )
         self.senders = {}
 
     def disconnect(self):
-        pass
-
-    def requeue(self, queue_name):
-        pass
+        self.connection.close()
 
     def get_sb_subscription_name(self, subscription):
         """
@@ -62,9 +57,7 @@ class SBProvider(BrokerProvider):
 
     @staticmethod
     def _validation_tb_event(
-        receiver: ServiceBusReceiver,
-        msg: ServiceBusReceivedMessage,
-        payload: dict,
+        receiver: ServiceBusReceiver, msg: ServiceBusReceivedMessage, payload: dict,
     ) -> Event:
         try:
             e = Event(**payload)
@@ -112,7 +105,7 @@ class SBProvider(BrokerProvider):
         with self.connection.get_subscription_receiver(
             topic_name=topic_name, subscription_name=subscription
         ) as receiver:
-            received_msgs = receiver.receive_messages(max_wait_time=2)
+            received_msgs = receiver.receive_messages(max_message_count=10, max_wait_time=5)
             for msg in received_msgs:
                 msg_json = json.loads(str(msg.message))
                 e = self._validation_tb_event(receiver, msg, msg_json)

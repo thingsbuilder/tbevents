@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import uuid
 
+
 from tbevents.tb_worker import TbWorker
 
 sample1 = {
@@ -11,7 +12,7 @@ sample1 = {
 }
 
 
-def pub():
+def publisher():
     w = TbWorker("example_worker_1")
     w.append_publish_event(event_name="my_fancy_event")
 
@@ -23,4 +24,4 @@ def pub():
 
 
 if __name__ == "__main__":
-    pub()
+    publisher()
