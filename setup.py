@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name='tbevents',
-      version='1.0.3',
+      version='1.0.5',
       url="https://github.com/thingsbuilder/tbevents",
       license="GPL",
       classifiers=[
@@ -15,4 +15,4 @@ setup(name='tbevents',
                   'as Event Bus',
       packages=find_packages(),
       long_description=open('README.md').read(),
-      install_requires=['kombu', 'python-dateutil', 'azure-servicebus'])
+      install_requires=['kombu', 'python-dateutil', 'azure-servicebus>=7.4.0'])
