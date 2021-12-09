@@ -4,5 +4,5 @@ python-dateutil
 coverage
 pytest-cov
 bson
-azure-servicebus
 pytest_rabbitmq
+azure-servicebus>=7.4.0
