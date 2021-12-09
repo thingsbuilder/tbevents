@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name='tbevents',
-      version='1.0.8',
+      version='1.0.9',
       url="https://github.com/thingsbuilder/tbevents",
       license="GPL",
       classifiers=[
