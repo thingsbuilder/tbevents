@@ -1,4 +1,5 @@
 import pika
+import json
 from pika.exchange_type import ExchangeType
 
 from tbevents.event_bus.broker.broker_provider import BrokerProvider
@@ -71,9 +72,9 @@ class RabbitPikaMQProvider(BrokerProvider):
         logger.debug(f"Trying send message{message}")
         self._channel.basic_publish(exchange=topic,
                                     routing_key="",
-                                    body=message,
+                                    body=json.dumps(message, indent = 4, sort_keys = True, default = str).encode(),
                                     properties=properties)
-        logger.debug('message sent: %s', event)
+        logger.debug('message sent: %s', message)
 
     def send_message(self, message, topic):
 
