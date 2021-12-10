@@ -17,6 +17,8 @@ class RabbitPikaMQProvider(BrokerProvider):
         self._params = pika.connection.ConnectionParameters(
             host=self.config.get_host(),
             port=self.config.get_port(),
+            heartbeat=600,
+            blocked_connection_timeout=300,
             virtual_host=self.config.get_virtual_host(),
             credentials=pika.credentials.PlainCredentials(self.config.get_user(), password=self.config.get_password()))
         self._conn = None
@@ -57,7 +59,8 @@ class RabbitPikaMQProvider(BrokerProvider):
             if self._channel is None:
                 self.connect()
             self._declare_topic(topic_name)
-        except pika.exceptions.ConnectionClosed:
+        except (pika.exceptions.ChannelWrongStateError, pika.exceptions.ConnectionClosed, pika.exceptions.ChannelClosed,
+                pika.exceptions.ChannelClosedByBroker.pika.exceptions.ConnectionWrongStateError):
             logger.debug('reconnecting to rabbit')
             self.connect()
             self._declare_topic(topic_name)
@@ -72,7 +75,7 @@ class RabbitPikaMQProvider(BrokerProvider):
         logger.debug(f"Trying send message{message}")
         self._channel.basic_publish(exchange=topic,
                                     routing_key="",
-                                    body=json.dumps(message, indent = 4, sort_keys = True, default = str).encode(),
+                                    body=json.dumps(message, indent=4, sort_keys=True, default=str).encode(),
                                     properties=properties)
         logger.debug('message sent: %s', message)
 
@@ -85,7 +88,8 @@ class RabbitPikaMQProvider(BrokerProvider):
 
         try:
             self._publish(message, topic)
-        except pika.exceptions.ConnectionClosed:
+        except (pika.exceptions.ChannelWrongStateError, pika.exceptions.ConnectionClosed, pika.exceptions.ChannelClosed,
+                pika.exceptions.ChannelClosedByBroker.pika.exceptions.ConnectionWrongStateError):
             logger.debug('reconnecting to queue')
             self.connect()
             self._publish(message, topic)
