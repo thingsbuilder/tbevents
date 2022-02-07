@@ -17,7 +17,7 @@ class RabbitPikaMQProvider(BrokerProvider):
         self._params = pika.connection.ConnectionParameters(
             host=self.config.get_host(),
             port=self.config.get_port(),
-            heartbeat=600,
+            heartbeat=10,
             blocked_connection_timeout=300,
             virtual_host=self.config.get_virtual_host(),
             credentials=pika.credentials.PlainCredentials(self.config.get_user(), password=self.config.get_password()))
@@ -60,7 +60,7 @@ class RabbitPikaMQProvider(BrokerProvider):
                 self.connect()
             self._declare_topic(topic_name)
         except (pika.exceptions.ChannelWrongStateError, pika.exceptions.ConnectionClosed, pika.exceptions.ChannelClosed,
-                pika.exceptions.ChannelClosedByBroker,pika.exceptions.ConnectionWrongStateError):
+                pika.exceptions.ChannelClosedByBroker,pika.exceptions.ConnectionWrongStateError, pika.exceptions.StreamLostError):
             logger.debug('reconnecting to rabbit')
             self.connect()
             self._declare_topic(topic_name)
@@ -89,7 +89,7 @@ class RabbitPikaMQProvider(BrokerProvider):
         try:
             self._publish(message, topic)
         except (pika.exceptions.ChannelWrongStateError, pika.exceptions.ConnectionClosed, pika.exceptions.ChannelClosed,
-                pika.exceptions.ChannelClosedByBroker, pika.exceptions.ConnectionWrongStateError):
+                pika.exceptions.ChannelClosedByBroker, pika.exceptions.ConnectionWrongStateError, pika.exceptions.StreamLostError):
             logger.debug('reconnecting to queue')
             self.connect()
             self._publish(message, topic)
